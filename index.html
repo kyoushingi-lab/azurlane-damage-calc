@@ -15,7 +15,6 @@
       --button-hover: linear-gradient(90deg,#1e40af,#6d28d9);
       --highlight: #16a34a;
       --warning: #d97706;
-      --group-bg: #f9fafb;
       --result-bg: #f3f4f6;
     }
     .dark {
@@ -28,23 +27,19 @@
       --button-hover: linear-gradient(90deg,#60a5fa,#a78bfa);
       --highlight: #22c55e;
       --warning: #fbbf24;
-      --group-bg: #374151;
       --result-bg: #1f2937;
     }
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; }
     header { background: var(--card); padding: 16px; text-align: right; box-shadow: 0 2px 6px rgba(0,0,0,.05); position: sticky; top:0; z-index:100; }
     h1 { text-align: center; margin: 20px 0; font-size: 2.2em; }
     h2 { font-size: 1.6em; margin: 20px 0; cursor: pointer; text-align:center; }
-    .container { max-width: 960px; margin: 20px auto; background: var(--card); padding: 30px; border-radius: 14px; box-shadow: 0 8px 30px rgba(0,0,0,.06); transition: background 0.3s; }
-    .group { background: var(--group-bg); padding: 16px; border-radius: 10px; margin-bottom: 20px; border: 1px solid var(--border); }
-    .group h3 { margin-top: 0; font-size: 1.1em; margin-bottom: 12px; }
+    .container { max-width: 600px; margin: 20px auto; background: var(--card); padding: 30px; border-radius: 14px; box-shadow: 0 8px 30px rgba(0,0,0,.06); transition: background 0.3s; }
     label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 1em; }
-    input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1em; background: var(--card); color: var(--text); }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
-    button.calc-btn { margin-top: 20px; padding: 14px; cursor: pointer; border: 0; border-radius: 10px; background: var(--button); color: #fff; font-size: 1.1em; font-weight: bold; width:100%; transition: transform 0.2s; }
+    input { width: 100%; padding: 10px 12px; margin-bottom: 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 1em; background: var(--card); color: var(--text); }
+    button.calc-btn { margin-top: 10px; padding: 14px; cursor: pointer; border: 0; border-radius: 10px; background: var(--button); color: #fff; font-size: 1.1em; font-weight: bold; width:100%; transition: transform 0.2s; }
     button.calc-btn:hover { background: var(--button-hover); transform: scale(1.03); }
-    button.reset-btn { margin-top: 10px; padding: 10px; cursor: pointer; border: 0; border-radius: 8px; background: #9ca3af; color: #fff; font-size: 0.9em; width:100%; }
-    .result { margin-top: 25px; font-size: 1em; background: var(--result-bg); padding:15px; border-radius:10px; border-left:6px solid var(--highlight); line-height:1.6; }
+    button.reset-btn { margin-top: 8px; padding: 10px; cursor: pointer; border: 0; border-radius: 8px; background: #9ca3af; color: #fff; font-size: 0.9em; width:100%; }
+    .result { margin-top: 20px; font-size: 1em; background: var(--result-bg); padding:15px; border-radius:10px; border-left:6px solid var(--highlight); line-height:1.6; }
     .highlight { font-size: 1.6em; font-weight: bold; color: var(--highlight); display:block; margin-bottom:6px; }
     .warning { font-weight: bold; color: var(--warning); display:block; margin-top:8px; }
     .collapsed .content { display: none; }
@@ -58,10 +53,18 @@
   <!-- 模块一 Azurlane-damage -->
   <div class="container">
     <h1>Azurlane-damage</h1>
-    <div class="group"><h3>面板相关</h3><div class="grid"><div><label>面板属性</label><input type="number" id="attr" value="538"></div><div><label>属性效率</label><input type="number" id="attrEff" value="1"></div></div></div>
-    <div class="group"><h3>武器相关</h3><div class="grid"><div><label>武器面板伤害</label><input type="number" id="weaponDmg" value="207"></div><div><label>武器系数</label><input type="number" id="weaponCoef" value="1.24"></div><div><label>武器效率</label><input type="number" id="weaponEff" value="1.45"></div><div><label>对甲效率</label><input type="number" id="armorEff" value="0.55"></div></div></div>
-    <div class="group"><h3>技能相关</h3><div class="grid"><div><label>增伤类技能</label><input type="number" id="skillAdd" value="1.1"></div><div><label>独立增伤</label><input type="number" id="skillMul" value="1.0"></div><div><label>敌人 debuff</label><input type="number" id="debuff" value="1"></div></div></div>
-    <div class="group"><h3>等级相关</h3><div class="grid"><div><label>我方等级</label><input type="number" id="myLv" value="120"></div><div><label>敌方等级</label><input type="number" id="enemyLv" value="35"></div><div><label>危险海域等级</label><input type="number" id="dangerLv" value="0"></div></div></div>
+    <label>面板属性</label><input type="number" id="attr" value="538">
+    <label>属性效率</label><input type="number" id="attrEff" value="1">
+    <label>武器面板伤害</label><input type="number" id="weaponDmg" value="207">
+    <label>武器系数</label><input type="number" id="weaponCoef" value="1.24">
+    <label>武器效率</label><input type="number" id="weaponEff" value="1.45">
+    <label>对甲效率</label><input type="number" id="armorEff" value="0.55">
+    <label>增伤类技能</label><input type="number" id="skillAdd" value="1.1">
+    <label>独立增伤</label><input type="number" id="skillMul" value="1.0">
+    <label>敌人 debuff</label><input type="number" id="debuff" value="1">
+    <label>我方等级</label><input type="number" id="myLv" value="120">
+    <label>敌方等级</label><input type="number" id="enemyLv" value="35">
+    <label>危险海域等级</label><input type="number" id="dangerLv" value="0">
     <button class="calc-btn" onclick="calc()">计算伤害</button>
     <button class="reset-btn" onclick="resetMain()">重置</button>
     <div class="result" id="result"></div>
@@ -71,8 +74,12 @@
   <div class="container collapsed" id="flatModule">
     <h2 onclick="toggleCollapse('flatModule')">Flat Stat Bonus ▼</h2>
     <div class="content">
-      <div class="group"><h3>面板相关</h3><div class="grid"><div><label>基础面板</label><input type="number" id="flatBase" value="389"></div><div><label>装备</label><input type="number" id="flatEquip" value="0"></div><div><label>技术</label><input type="number" id="flatTech" value="50"></div><div><label>专武</label><input type="number" id="flatSpec" value="0"></div></div></div>
-      <div class="group"><h3>技能相关</h3><div class="grid"><div><label>技能加纯数值</label><input type="number" id="flatSkill" value="20"></div><div><label>原始伤害</label><input type="number" id="flatDmg" value="94"></div></div></div>
+      <label>基础面板</label><input type="number" id="flatBase" value="389">
+      <label>装备</label><input type="number" id="flatEquip" value="0">
+      <label>技术</label><input type="number" id="flatTech" value="50">
+      <label>专武</label><input type="number" id="flatSpec" value="0">
+      <label>技能加纯数值</label><input type="number" id="flatSkill" value="20">
+      <label>原始伤害</label><input type="number" id="flatDmg" value="94">
       <button class="calc-btn" onclick="calcFlat()">计算 Flat 加成</button>
       <button class="reset-btn" onclick="resetFlat()">重置</button>
       <div class="result" id="flatResult"></div>
@@ -83,8 +90,12 @@
   <div class="container collapsed" id="percModule">
     <h2 onclick="toggleCollapse('percModule')">% Stat Bonus ▼</h2>
     <div class="content">
-      <div class="group"><h3>面板相关</h3><div class="grid"><div><label>基础面板</label><input type="number" id="percBase" value="389"></div><div><label>装备</label><input type="number" id="percEquip" value="0"></div><div><label>技术</label><input type="number" id="percTech" value="50"></div><div><label>专武</label><input type="number" id="percSpec" value="29"></div></div></div>
-      <div class="group"><h3>技能相关</h3><div class="grid"><div><label>技能百分比 (1.1 = +10%)</label><input type="number" id="percSkill" value="1.1"></div><div><label>原始伤害</label><input type="number" id="percDmg" value="68"></div></div></div>
+      <label>基础面板</label><input type="number" id="percBase" value="389">
+      <label>装备</label><input type="number" id="percEquip" value="0">
+      <label>技术</label><input type="number" id="percTech" value="50">
+      <label>专武</label><input type="number" id="percSpec" value="29">
+      <label>技能百分比 (1.1 = +10%)</label><input type="number" id="percSkill" value="1.1">
+      <label>原始伤害</label><input type="number" id="percDmg" value="68">
       <button class="calc-btn" onclick="calcPerc()">计算 % 加成</button>
       <button class="reset-btn" onclick="resetPerc()">重置</button>
       <div class="result" id="percResult"></div>
@@ -118,10 +129,8 @@
       const dmg = round(base);
       const minDmg = round(base - 1);
       const maxDmg = round(base + 4);
-      const ratio = (dmg/base).toFixed(3);
       document.getElementById('result').innerHTML = `<span class="highlight">最终伤害: ${dmg}</span>`+
         `未取整: ${fmt(base)}<br>`+
-        `提升比例: ${ratio}<br>`+
         `<span class=\"warning\">⚡ 波动范围: ${minDmg} ~ ${maxDmg}</span>`;
     }
 
@@ -165,11 +174,13 @@
       const minDmg = round(newDmg - 1);
       const maxDmg = round(newDmg + 4);
       const perc1 = 1.01, perc10 = 1.10;
-      const newDmg1 = round(dmg0 * ((1 + (totalNo*perc1)/100)/rateNo));
-      const newDmg10 = round(dmg0 * ((1 + (totalNo*perc10)/100)/rateNo));
+      const total1  = totalNo * perc1;
+      const total10 = totalNo * perc10;
+      const newDmg1 = round(dmg0 * ((1 + total1/100) / rateNo));
+      const newDmg10 = round(dmg0 * ((1 + total10/100) / rateNo));
       document.getElementById('percResult').innerHTML = `<span class="highlight">新伤害: ${dmg}</span>`+
-        `有技能面板: ${round(totalWith)} → 倍率 ${fmt(rateWith)}<br>`+
-        `原始面板: ${totalNo} → 倍率 ${fmt(rateNo)}<br>`+
+        `有技能面板: ${fmt(totalWith)} → 倍率 ${fmt(rateWith)}<br>`+
+        `原始面板: ${fmt(totalNo)} → 倍率 ${fmt(rateNo)}<br>`+
         `提升比例: ${fmt(ratio)}<br>`+
         `<span class=\"warning\">⚡ 波动范围: ${minDmg} ~ ${maxDmg}</span><br><br>`+
         `<b>额外参考</b><br>`+
@@ -183,3 +194,4 @@
   </script>
 </body>
 </html>
+
