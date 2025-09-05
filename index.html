@@ -14,6 +14,7 @@
       --border: #e5e7eb;
       --button: #2563eb;
       --button-hover: #1e40af;
+      --highlight: #16a34a;
     }
     .dark {
       --bg: #111827;
@@ -23,6 +24,7 @@
       --border: #374151;
       --button: #3b82f6;
       --button-hover: #60a5fa;
+      --highlight: #22c55e;
     }
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; }
     header { background: var(--card); padding: 16px; text-align: right; box-shadow: 0 2px 6px rgba(0,0,0,.05); position: sticky; top:0; z-index:100; }
@@ -31,11 +33,12 @@
     .container { max-width: 960px; margin: 20px auto; background: var(--card); padding: 30px; border-radius: 14px; box-shadow: 0 8px 30px rgba(0,0,0,.06); transition: background 0.3s; }
     label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 1em; }
     input, select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1em; background: var(--card); color: var(--text); transition: background 0.3s, color 0.3s, border 0.3s; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
     button.calc-btn { margin-top: 20px; padding: 14px; cursor: pointer; border: 0; border-radius: 10px; background: var(--button); color: #fff; font-size: 1.1em; font-weight: bold; width:100%; transition: background 0.3s; }
     button.calc-btn:hover { background: var(--button-hover); }
     .muted { color: var(--muted); font-size: 0.9em; }
-    .result { margin-top: 25px; font-size: 1.1em; font-weight: bold; color: var(--text); background: var(--bg); padding:15px; border-radius:10px; border:1px solid var(--border); transition: background 0.3s, color 0.3s, border 0.3s; }
+    .result { margin-top: 25px; font-size: 1em; font-weight: bold; color: var(--text); background: var(--bg); padding:15px; border-radius:10px; border:1px solid var(--border); transition: background 0.3s, color 0.3s, border 0.3s; }
+    .highlight { font-size: 1.3em; color: var(--highlight); }
     details { background: var(--bg); border:1px solid var(--border); padding:14px; border-radius:10px; margin-top:18px; font-size: 0.95em; transition: background 0.3s, border 0.3s; }
     summary { cursor:pointer; font-weight:bold; }
     .toggle-btn { padding: 8px 14px; border-radius: 8px; background: var(--button); color: #fff; border: none; cursor: pointer; font-size: 0.9em; font-weight: bold; transition: background 0.3s; }
@@ -198,7 +201,7 @@
       const base = part1 * weaponCoef * weaponEff * armorEff * skillAdd * debuff * levelCoef * skillMul;
       const minDmg = Math.floor(base - 1);
       const maxDmg = Math.floor(base + 4);
-      document.getElementById('result').innerHTML = `最终伤害(未取整): ${fmt(base)}<br>最终伤害(取整): ${Math.floor(base)}<br>波动范围: ${minDmg} ~ ${maxDmg}`;
+      document.getElementById('result').innerHTML = `<span class="highlight">最终伤害: ${Math.floor(base)}</span><br>(未取整: ${fmt(base)})<br>波动范围: ${minDmg} ~ ${maxDmg}`;
     }
 
     // 模块二 Flat Stat Bonus
@@ -217,10 +220,10 @@
       const newDmg = dmg * ratio;
       const minDmg = Math.floor(newDmg - 1);
       const maxDmg = Math.floor(newDmg + 4);
-      document.getElementById('flatResult').innerHTML = `总值(有技能): ${totalWithSkill} → (1+${totalWithSkill}/100)=${fmt(rateWith)}<br>`+
-      `原始总值: ${totalNoSkill} → (1+${totalNoSkill}/100)=${fmt(rateNo)}<br>`+
+      document.getElementById('flatResult').innerHTML = `<span class="highlight">新伤害: ${fmt(newDmg)}</span><br>`+
+      `总值(有技能): ${totalWithSkill} → ${fmt(rateWith)}<br>`+
+      `原始总值: ${totalNoSkill} → ${fmt(rateNo)}<br>`+
       `提升比例: ${fmt(ratio)}<br>`+
-      `新伤害: ${fmt(newDmg)}<br>`+
       `波动范围: ${minDmg} ~ ${maxDmg}`;
     }
 
@@ -240,11 +243,21 @@
       const newDmg = dmg * ratio;
       const minDmg = Math.floor(newDmg - 1);
       const maxDmg = Math.floor(newDmg + 4);
-      document.getElementById('percResult').innerHTML = `总值(有技能): ${fmt(totalWithSkill)} → (1+${fmt(totalWithSkill)}/100)=${fmt(rateWith)}<br>`+
-      `原始总值: ${total} → (1+${total}/100)=${fmt(rateNo)}<br>`+
+
+      // 额外计算 1% 和 10%
+      const perc1 = 1.01;
+      const perc10 = 1.1;
+      const newDmg1 = dmg * ((1+(total*perc1)/100)/(1+total/100));
+      const newDmg10 = dmg * ((1+(total*perc10)/100)/(1+total/100));
+
+      document.getElementById('percResult').innerHTML = `<span class="highlight">新伤害: ${fmt(newDmg)}</span><br>`+
+      `总值(有技能): ${fmt(totalWithSkill)} → ${fmt(rateWith)}<br>`+
+      `原始总值: ${total} → ${fmt(rateNo)}<br>`+
       `提升比例: ${fmt(ratio)}<br>`+
-      `新伤害: ${fmt(newDmg)}<br>`+
-      `波动范围: ${minDmg} ~ ${maxDmg}`;
+      `波动范围: ${minDmg} ~ ${maxDmg}<br><br>`+
+      `<b>额外参考</b><br>`+
+      `+1% 技能 → 新伤害: ${Math.floor(newDmg1)}<br>`+
+      `+10% 技能 → 新伤害: ${Math.floor(newDmg10)}`;
     }
   </script>
 </body>
