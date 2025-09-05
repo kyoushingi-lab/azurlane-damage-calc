@@ -1,1 +1,0 @@
-# azurlane-damage-calc
