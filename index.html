@@ -25,23 +25,27 @@
       --button-hover: #60a5fa;
     }
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; }
-    h1 { text-align: center; margin-bottom: 20px; font-size: 2em; }
-    .container { max-width: 1000px; margin: 40px auto; background: var(--card); padding: 30px; border-radius: 14px; box-shadow: 0 8px 30px rgba(0,0,0,.06); transition: background 0.3s; }
-    label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 1.05em; }
-    input, select { width: 100%; padding: 12px 14px; margin-bottom: 18px; border: 1px solid var(--border); border-radius: 8px; font-size: 1em; background: var(--card); color: var(--text); transition: background 0.3s, color 0.3s, border 0.3s; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-    button { margin-top: 20px; padding: 14px 20px; cursor: pointer; border: 0; border-radius: 10px; background: var(--button); color: #fff; font-size: 1.1em; font-weight: bold; display:block; width:100%; transition: background 0.3s; }
-    button:hover { background: var(--button-hover); }
-    .muted { color: var(--muted); font-size: 0.95em; }
-    .result { margin-top: 25px; font-size: 1.2em; font-weight: bold; color: var(--text); background: var(--bg); padding:15px; border-radius:10px; border:1px solid var(--border); transition: background 0.3s, color 0.3s, border 0.3s; }
+    header { background: var(--card); padding: 16px; text-align: right; box-shadow: 0 2px 6px rgba(0,0,0,.05); position: sticky; top:0; z-index:100; }
+    h1 { text-align: center; margin: 20px 0; font-size: 2.2em; }
+    .container { max-width: 960px; margin: 20px auto; background: var(--card); padding: 30px; border-radius: 14px; box-shadow: 0 8px 30px rgba(0,0,0,.06); transition: background 0.3s; }
+    label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 1em; }
+    input, select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1em; background: var(--card); color: var(--text); transition: background 0.3s, color 0.3s, border 0.3s; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    button.calc-btn { margin-top: 20px; padding: 14px; cursor: pointer; border: 0; border-radius: 10px; background: var(--button); color: #fff; font-size: 1.1em; font-weight: bold; width:100%; transition: background 0.3s; }
+    button.calc-btn:hover { background: var(--button-hover); }
+    .muted { color: var(--muted); font-size: 0.9em; }
+    .result { margin-top: 25px; font-size: 1.1em; font-weight: bold; color: var(--text); background: var(--bg); padding:15px; border-radius:10px; border:1px solid var(--border); transition: background 0.3s, color 0.3s, border 0.3s; }
     details { background: var(--bg); border:1px solid var(--border); padding:14px; border-radius:10px; margin-top:18px; font-size: 0.95em; transition: background 0.3s, border 0.3s; }
     summary { cursor:pointer; font-weight:bold; }
-    .toggle-btn { position: fixed; top: 20px; right: 20px; padding: 10px 16px; border-radius: 8px; background: var(--button); color: #fff; border: none; cursor: pointer; font-size: 0.9em; font-weight: bold; transition: background 0.3s; }
+    .toggle-btn { padding: 8px 14px; border-radius: 8px; background: var(--button); color: #fff; border: none; cursor: pointer; font-size: 0.9em; font-weight: bold; transition: background 0.3s; }
     .toggle-btn:hover { background: var(--button-hover); }
   </style>
 </head>
 <body>
-  <button class="toggle-btn" onclick="toggleDarkMode()">切换深色模式</button>
+  <header>
+    <button class="toggle-btn" onclick="toggleDarkMode()">切换深色模式</button>
+  </header>
+
   <div class="container">
     <h1>Azurlane-damage</h1>
     <p class="muted" style="text-align:center; margin-bottom:30px;">公式：<code>(1 + 面板属性 × 属性效率 ÷ 100) × 武器面板伤害 × 武器系数 × 武器效率 × 对甲效率 × 增伤(加算) × 敌人debuff × 等级压制 × 独立增伤</code></p>
@@ -97,7 +101,7 @@
       </div>
     </div>
 
-    <button onclick="calc()">计算伤害</button>
+    <button class="calc-btn" onclick="calc()">计算伤害</button>
 
     <div class="result" id="result"></div>
 
