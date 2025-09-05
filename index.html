@@ -27,6 +27,7 @@
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; }
     header { background: var(--card); padding: 16px; text-align: right; box-shadow: 0 2px 6px rgba(0,0,0,.05); position: sticky; top:0; z-index:100; }
     h1 { text-align: center; margin: 20px 0; font-size: 2.2em; }
+    h2 { font-size: 1.6em; margin: 30px 0 20px; text-align:center; }
     .container { max-width: 960px; margin: 20px auto; background: var(--card); padding: 30px; border-radius: 14px; box-shadow: 0 8px 30px rgba(0,0,0,.06); transition: background 0.3s; }
     label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 1em; }
     input, select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1em; background: var(--card); color: var(--text); transition: background 0.3s, color 0.3s, border 0.3s; }
@@ -46,6 +47,7 @@
     <button class="toggle-btn" onclick="toggleDarkMode()">切换深色模式</button>
   </header>
 
+  <!-- 模块一 Azurlane-damage -->
   <div class="container">
     <h1>Azurlane-damage</h1>
     <p class="muted" style="text-align:center; margin-bottom:30px;">公式：<code>(1 + 面板属性 × 属性效率 ÷ 100) × 武器面板伤害 × 武器系数 × 武器效率 × 对甲效率 × 增伤(加算) × 敌人debuff × 等级压制 × 独立增伤</code></p>
@@ -102,39 +104,81 @@
     </div>
 
     <button class="calc-btn" onclick="calc()">计算伤害</button>
-
     <div class="result" id="result"></div>
+  </div>
 
-    <details>
-      <summary>解释说明</summary>
-      <div class="muted">
-        <p>面板属性：炮击，雷击，航空（阵型、增加属性的技能，全部加算）</p>
-        <p>属性效率：通常为100%，航空炸弹为80%，航空鱼雷为100%，弹幕100%</p>
-        <p>武器面板伤害：武器本身标注的伤害。弹幕，航弹，魔法副炮见 <a href="https://wiki.biligame.com/blhx/%E5%85%A8%E6%AD%A6%E5%99%A8%E5%AF%B9%E6%8A%A4%E7%94%B2%E8%A1%A5%E6%AD%A3%E4%B8%80%E8%A7%88" target="_blank">《全武器秒伤和对护甲补正》</a></p>
-        <p>武器系数：除舰炮外均为100%。舰炮系数见 <a href="https://wiki.biligame.com/blhx/%E5%85%A8%E6%AD%A6%E5%99%A8%E5%AF%B9%E6%8A%A4%E7%94%B2%E8%A1%A5%E6%AD%A3%E4%B8%80%E8%A7%88" target="_blank">《全武器秒伤和对护甲补正》</a></p>
-        <p>武器效率：装备槽上标注的数值。雷巡魔法副炮约为30~40%，其他不可见武器均为100%。</p>
-        <p>对甲效率：见《全武器秒伤和对护甲补正》</p>
-        <p>增伤技能：<br>1. XX伤害提升X%，包括满弹10%，空弹-50%，加算。<br>2. 特种猎杀，独立增伤。<br>3. 弹药精通，独立增伤。<br>4. 手操伤害提升，独立增伤。</p>
-        <p>敌人 debuff：敌人受到的 debuff，相互之间乘算。</p>
-        <p>等级压制：每一级2%，上限50%。当危险海域等级为0时，将原始危险海域等级加入等级压制计算，即（己方等级-敌方等级+原始危险海域等级）×2%</p>
-        <p>PS：伤害存在波动 -1 ~ +4</p>
+  <!-- 模块二 Flat Stat Bonus -->
+  <div class="container">
+    <h2>Flat Stat Bonus</h2>
+    <div class="grid">
+      <div>
+        <label>基础面板</label>
+        <input type="number" id="flatBase" value="389">
       </div>
-    </details>
+      <div>
+        <label>装备</label>
+        <input type="number" id="flatEquip" value="0">
+      </div>
+      <div>
+        <label>技术</label>
+        <input type="number" id="flatTech" value="50">
+      </div>
+      <div>
+        <label>专武</label>
+        <input type="number" id="flatSpec" value="0">
+      </div>
+      <div>
+        <label>技能加纯数值</label>
+        <input type="number" id="flatSkill" value="20">
+      </div>
+      <div>
+        <label>原始伤害</label>
+        <input type="number" id="flatDmg" value="94">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calcFlat()">计算 Flat 加成</button>
+    <div class="result" id="flatResult"></div>
+  </div>
 
-    <details>
-      <summary>查看中间步骤</summary>
-      <div id="steps" class="muted"></div>
-    </details>
+  <!-- 模块三 % Stat Bonus -->
+  <div class="container">
+    <h2>% Stat Bonus</h2>
+    <div class="grid">
+      <div>
+        <label>基础面板</label>
+        <input type="number" id="percBase" value="389">
+      </div>
+      <div>
+        <label>装备</label>
+        <input type="number" id="percEquip" value="0">
+      </div>
+      <div>
+        <label>技术</label>
+        <input type="number" id="percTech" value="50">
+      </div>
+      <div>
+        <label>专武</label>
+        <input type="number" id="percSpec" value="29">
+      </div>
+      <div>
+        <label>技能百分比（例如 1.1 = +10%）</label>
+        <input type="number" step="0.01" id="percSkill" value="1.1">
+      </div>
+      <div>
+        <label>原始伤害</label>
+        <input type="number" id="percDmg" value="68">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calcPerc()">计算 % 加成</button>
+    <div class="result" id="percResult"></div>
   </div>
 
   <script>
-    function toggleDarkMode(){
-      document.body.classList.toggle('dark');
-    }
-
+    function toggleDarkMode(){ document.body.classList.toggle('dark'); }
     function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
     function fmt(n){ return (Math.round(n*1e6)/1e6).toString(); }
 
+    // 模块一
     function calc(){
       const attr = parseFloat(document.getElementById('attr').value);
       const attrEff = parseFloat(document.getElementById('attrEff').value);
@@ -148,28 +192,60 @@
       const myLv = parseFloat(document.getElementById('myLv').value);
       const enemyLv = parseFloat(document.getElementById('enemyLv').value);
       const dangerLv = parseFloat(document.getElementById('dangerLv').value);
-
       let levelCoef = clamp(1 + (myLv - enemyLv + dangerLv) * 0.02, 0.5, 1.5);
-
       const statBlock = 1 + attr * attrEff / 100;
       const part1 = statBlock * weaponDmg;
-
       const base = part1 * weaponCoef * weaponEff * armorEff * skillAdd * debuff * levelCoef * skillMul;
-
       const minDmg = Math.floor(base - 1);
       const maxDmg = Math.floor(base + 4);
-
-      document.getElementById('result').innerHTML = `最终伤害(未向下取整): ${fmt(base)}<br>最终伤害(向下取整): ${Math.floor(base)}<br>伤害波动范围: ${minDmg} ~ ${maxDmg}`;
-
-      document.getElementById('steps').innerHTML = `
-        (1 + 面板属性 × 属性效率 ÷ 100) = (1 + ${attr} × ${attrEff} ÷ 100) = <b>${fmt(statBlock)}</b><br>
-        与武器面板相乘： ${fmt(statBlock)} × ${weaponDmg} = <b>${fmt(part1)}</b><br>
-        乘区： × 武器系数 ${weaponCoef} × 武器效率 ${weaponEff} × 对甲 ${armorEff} × 加算 ${skillAdd} × debuff ${debuff} × 等级压制 ${fmt(levelCoef)} × 独立增伤 ${skillMul}<br>
-        = <b>${fmt(base)}</b>
-      `;
+      document.getElementById('result').innerHTML = `最终伤害(未取整): ${fmt(base)}<br>最终伤害(取整): ${Math.floor(base)}<br>波动范围: ${minDmg} ~ ${maxDmg}`;
     }
 
-    calc();
+    // 模块二 Flat Stat Bonus
+    function calcFlat(){
+      const base = parseFloat(document.getElementById('flatBase').value);
+      const equip = parseFloat(document.getElementById('flatEquip').value);
+      const tech = parseFloat(document.getElementById('flatTech').value);
+      const spec = parseFloat(document.getElementById('flatSpec').value);
+      const skill = parseFloat(document.getElementById('flatSkill').value);
+      const dmg = parseFloat(document.getElementById('flatDmg').value);
+      const totalWithSkill = base+equip+tech+spec+skill;
+      const totalNoSkill = base+equip+tech+spec;
+      const rateWith = 1 + totalWithSkill/100;
+      const rateNo = 1 + totalNoSkill/100;
+      const ratio = rateWith/rateNo;
+      const newDmg = dmg * ratio;
+      const minDmg = Math.floor(newDmg - 1);
+      const maxDmg = Math.floor(newDmg + 4);
+      document.getElementById('flatResult').innerHTML = `总值(有技能): ${totalWithSkill} → (1+${totalWithSkill}/100)=${fmt(rateWith)}<br>`+
+      `原始总值: ${totalNoSkill} → (1+${totalNoSkill}/100)=${fmt(rateNo)}<br>`+
+      `提升比例: ${fmt(ratio)}<br>`+
+      `新伤害: ${fmt(newDmg)}<br>`+
+      `波动范围: ${minDmg} ~ ${maxDmg}`;
+    }
+
+    // 模块三 % Stat Bonus
+    function calcPerc(){
+      const base = parseFloat(document.getElementById('percBase').value);
+      const equip = parseFloat(document.getElementById('percEquip').value);
+      const tech = parseFloat(document.getElementById('percTech').value);
+      const spec = parseFloat(document.getElementById('percSpec').value);
+      const perc = parseFloat(document.getElementById('percSkill').value);
+      const dmg = parseFloat(document.getElementById('percDmg').value);
+      const total = base+equip+tech+spec;
+      const totalWithSkill = total * perc;
+      const rateWith = 1 + totalWithSkill/100;
+      const rateNo = 1 + total/100;
+      const ratio = rateWith/rateNo;
+      const newDmg = dmg * ratio;
+      const minDmg = Math.floor(newDmg - 1);
+      const maxDmg = Math.floor(newDmg + 4);
+      document.getElementById('percResult').innerHTML = `总值(有技能): ${fmt(totalWithSkill)} → (1+${fmt(totalWithSkill)}/100)=${fmt(rateWith)}<br>`+
+      `原始总值: ${total} → (1+${total}/100)=${fmt(rateNo)}<br>`+
+      `提升比例: ${fmt(ratio)}<br>`+
+      `新伤害: ${fmt(newDmg)}<br>`+
+      `波动范围: ${minDmg} ~ ${maxDmg}`;
+    }
   </script>
 </body>
 </html>
