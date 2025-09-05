@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>碧蓝航线伤害计算器</title>
+  <title>azurlane-damage</title>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
@@ -22,7 +22,7 @@
     <label>面板属性（炮击/雷击/航空）</label>
     <input type="number" id="attr" value="500">
 
-    <label>属性效率（默认100%）</label>
+    <label>属性效率（默认填100表示100%）</label>
     <input type="number" id="attrEff" value="100">
 
     <label>武器面板伤害</label>
@@ -37,10 +37,10 @@
     <label>对甲效率</label>
     <input type="number" step="0.01" id="armorEff" value="1.0">
 
-    <label>增伤技能（加算，输入总倍率，例如1.1表示+10%）</label>
+    <label>增伤技能（加算，先相加后转倍率，例如1.1表示+10%）</label>
     <input type="number" step="0.01" id="skillAdd" value="1.0">
 
-    <label>独立增伤（乘算，多个请相乘后输入，例如1.2×1.15=1.38）</label>
+    <label>独立增伤（乘算，多个相乘后输入，例如1.15×1.12=1.288）</label>
     <input type="number" step="0.01" id="skillMul" value="1.0">
 
     <label>敌人debuff（例如1.1表示+10%）</label>
@@ -51,6 +51,9 @@
 
     <label>敌方等级</label>
     <input type="number" id="enemyLv" value="100">
+
+    <label>危险海域等级（默认0）</label>
+    <input type="number" id="dangerLv" value="0">
 
     <button onclick="calc()">计算伤害</button>
 
@@ -70,14 +73,17 @@
       let debuff = parseFloat(document.getElementById('debuff').value);
       let myLv = parseFloat(document.getElementById('myLv').value);
       let enemyLv = parseFloat(document.getElementById('enemyLv').value);
+      let dangerLv = parseFloat(document.getElementById('dangerLv').value);
 
       // 等级压制
-      let levelCoef = 1 + (myLv - enemyLv) * 0.02;
-      if(levelCoef < 0.5) levelCoef = 0.5; // 下限
-      if(levelCoef > 1.5) levelCoef = 1.5; // 上限
+      let levelCoef = 1 + (myLv - enemyLv + dangerLv) * 0.02;
+      if(levelCoef < 0.5) levelCoef = 0.5;
+      if(levelCoef > 1.5) levelCoef = 1.5;
 
-      // 基础伤害公式
-      let base = (attr * attrEff + weaponDmg) * weaponCoef * weaponEff * armorEff * skillAdd * debuff * levelCoef * skillMul;
+      // 基础伤害公式 (面板属性×效率 + 武器伤害)
+      let base = (attr * attrEff + weaponDmg)
+                * weaponCoef * weaponEff
+                * armorEff * skillAdd * debuff * levelCoef * skillMul;
 
       // 波动范围 -1 ~ +4
       let minDmg = Math.floor(base - 1);
@@ -88,3 +94,4 @@
   </script>
 </body>
 </html>
+
