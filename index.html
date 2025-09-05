@@ -6,7 +6,7 @@
   <title>Azurlane Damage Calculator</title>
   <style>
     body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; background: #f3f4f6; color: #111827; }
-    header { background: #1f2937; color: #fff; padding: 20px; text-align: center; }
+    header { background: #1f2937; color: #fff; padding: 20px; text-align: center; position: relative; }
     header h1 { margin: 0; font-size: 2em; }
     header p { margin: 6px 0 0; font-size: 0.95em; color: #d1d5db; }
     header button { position: absolute; right: 20px; top: 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; padding: 8px 14px; cursor: pointer; }
@@ -15,20 +15,26 @@
     h2 { font-size: 1.3em; margin-bottom: 18px; border-left: 6px solid #3b82f6; padding-left: 10px; color: #1f2937; }
     .desc { font-size: 0.95em; color: #4b5563; margin-bottom: 20px; line-height: 1.6; }
 
-    .grid2 { display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 28px; row-gap: 16px; }
+    .grid2 { display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 28px; row-gap: 20px; }
     @media (max-width: 780px){ .grid2 { grid-template-columns: 1fr; } }
-    .field { display: flex; align-items: center; justify-content: space-between; }
-    label { flex: 1; margin-right: 10px; font-weight: 600; font-size: 0.95em; color: #374151; text-align: right; }
-    input { flex: 1; max-width: 220px; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1em; background: #f3f4f6; transition: border 0.2s, box-shadow 0.2s; }
+    .field { display: flex; flex-direction: column; align-items: flex-start; }
+    label { margin-bottom: 6px; font-weight: 600; font-size: 1em; color: #374151; text-align: left; }
+    input { width: 100%; max-width: 220px; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1.05em; text-align: right; background: #f3f4f6; transition: border 0.2s, box-shadow 0.2s; }
     input:focus { outline: none; border: 1px solid #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
 
-    .btn { margin-top: 16px; padding: 14px; cursor: pointer; border: 0; border-radius: 12px; background: linear-gradient(90deg,#2563eb,#7c3aed); color: #fff; font-size: 1.05em; font-weight: 700; width:100%; transition: transform 0.2s; }
-    .btn:hover { transform: translateY(-1px); }
+    .btn { margin-top: 16px; padding: 14px; cursor: pointer; border: 0; border-radius: 12px; background: linear-gradient(90deg,#2563eb,#7c3aed); color: #fff; font-size: 1.05em; font-weight: 700; width:100%; height: 48px; transition: transform 0.2s, box-shadow 0.2s; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
     .btn.gray { background: #9ca3af; }
 
     .result { margin-top: 20px; font-size: 1em; background: #f9fafb; padding:20px; border-radius:12px; border-left:6px solid #16a34a; line-height:1.6; }
     .highlight { font-size: 1.8em; font-weight: 800; color: #16a34a; display:block; margin-bottom:8px; }
     .warning { font-weight: 800; color: #d97706; display:block; margin-top:10px; }
+
+    .details { display: none; margin-top: 12px; padding: 12px; background: #f3f4f6; border-radius: 8px; font-size: 0.9em; color: #374151; line-height: 1.5; white-space: pre-line; }
+    .toggle-btn { background: none; border: none; color: #2563eb; cursor: pointer; margin-top: 10px; font-size: 0.9em; }
+    .toggle-btn:hover { text-decoration: underline; }
+
+    footer { margin-top: 40px; padding: 20px; text-align: center; background: #1f2937; color: #9ca3af; font-size: 0.9em; }
   </style>
 </head>
 <body>
@@ -45,12 +51,13 @@
       <b>面板属性</b>：炮击/雷击/航空（阵型、技能等加算）。<br>
       <b>武器效率</b>：装备槽数值。<br>
       <b>对甲效率</b>：轻甲/中甲/重甲补正。<br>
-      <b>增伤技能</b>：分为加算类（如满弹+10%）与独立乘算类（如特种猎杀）。<br>
+      <b>增伤技能</b>：分为加算类与独立乘算类。<br>
       <b>等级压制</b>：每级差2%，上限±50%。<br>
       伤害最终存在 <b>-1 ~ +4</b> 的浮动范围。
     </div>
   </div>
 
+  <!-- 主伤害公式 -->
   <div class="container">
     <h2>主伤害公式</h2>
     <div class="grid2">
@@ -60,7 +67,7 @@
       <div class="field"><label>武器系数</label><input type="number" id="weaponCoef" value="1.24"></div>
       <div class="field"><label>武器效率</label><input type="number" id="weaponEff" value="1.45"></div>
       <div class="field"><label>对甲效率</label><input type="number" id="armorEff" value="0.55"></div>
-      <div class="field"><label>增伤类技能（加算）</label><input type="number" id="skillAdd" value="1.1"></div>
+      <div class="field"><label>增伤类技能</label><input type="number" id="skillAdd" value="1.1"></div>
       <div class="field"><label>独立增伤</label><input type="number" id="skillMul" value="1.0"></div>
       <div class="field"><label>敌人 debuff</label><input type="number" id="debuff" value="1"></div>
       <div class="field"><label>我方等级</label><input type="number" id="myLv" value="120"></div>
@@ -70,8 +77,11 @@
     <button class="btn" onclick="calc()">计算伤害</button>
     <button class="btn gray" onclick="resetMain()">重置</button>
     <div class="result" id="result"></div>
+    <button class="toggle-btn" onclick="toggleDetails('mainDetails')">📘 展开公式详情</button>
+    <div class="details" id="mainDetails"></div>
   </div>
 
+  <!-- Flat Stat Bonus -->
   <div class="container">
     <h2>Flat Stat Bonus</h2>
     <div class="grid2">
@@ -85,8 +95,11 @@
     <button class="btn" onclick="calcFlat()">计算 Flat 加成</button>
     <button class="btn gray" onclick="resetFlat()">重置</button>
     <div class="result" id="flatResult"></div>
+    <button class="toggle-btn" onclick="toggleDetails('flatDetails')">📘 展开公式详情</button>
+    <div class="details" id="flatDetails"></div>
   </div>
 
+  <!-- % Stat Bonus -->
   <div class="container">
     <h2>% Stat Bonus</h2>
     <div class="grid2">
@@ -100,13 +113,22 @@
     <button class="btn" onclick="calcPerc()">计算 % 加成</button>
     <button class="btn gray" onclick="resetPerc()">重置</button>
     <div class="result" id="percResult"></div>
+    <button class="toggle-btn" onclick="toggleDetails('percDetails')">📘 展开公式详情</button>
+    <div class="details" id="percDetails"></div>
   </div>
+
+  <footer>
+    Azurlane Damage Calculator v1.0 | Made by <a href="https://github.com/yourname" style="color:#9ca3af;">yourname</a>
+  </footer>
 
   <script>
     function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
     function round(n){ return Math.round(n); }
     function fmt(n){ return (Math.round(n*1000)/1000).toString(); }
-    function pct(n){ return (Math.round((n-1)*1000)/10).toFixed(1)+'%'; }
+    function toggleDetails(id){
+      const el = document.getElementById(id);
+      el.style.display = el.style.display === "block" ? "none" : "block";
+    }
 
     function calc(){
       const attr = +document.getElementById('attr').value;
@@ -121,17 +143,26 @@
       const myLv = +document.getElementById('myLv').value;
       const enemyLv = +document.getElementById('enemyLv').value;
       const dangerLv = +document.getElementById('dangerLv').value;
+
       let levelCoef = clamp(1 + (myLv - enemyLv + dangerLv) * 0.02, 0.5, 1.5);
       const statBlock = 1 + attr * attrEff / 100;
       const part1 = statBlock * weaponDmg;
       const base = part1 * weaponCoef * weaponEff * armorEff * skillAdd * debuff * levelCoef * skillMul;
+
       const dmg = round(base);
       const minDmg = round(base - 1);
       const maxDmg = round(base + 4);
-      document.getElementById('result').innerHTML = `<span class="highlight">最终伤害: ${dmg}</span>`+
-        `未取整: ${fmt(base)}<br>`+
-        `提升比例: ${pct(base/ (part1 * weaponCoef * weaponEff * armorEff * debuff))}<br>`+
-        `<span class=\"warning\">⚡ 波动范围: ${minDmg} ~ ${maxDmg}</span>`;
+
+      document.getElementById('result').innerHTML = `
+        <span class="highlight">最终伤害: ${dmg}</span>
+        未取整: ${fmt(base)}<br>
+        <span class="warning">⚡ 波动范围: ${minDmg} ~ ${maxDmg}</span>
+      `;
+
+      document.getElementById('mainDetails').innerText =
+        `(1 + ${attr}×${attrEff}/100) × ${weaponDmg} × ${weaponCoef} × ${weaponEff} × ${armorEff} × ${skillAdd} × ${debuff} × ${levelCoef}\n`+
+        `= ${fmt(base)}\n`+
+        `最终伤害 = ${dmg} (范围 ${minDmg} ~ ${maxDmg})`;
     }
 
     function calcFlat(){
@@ -141,20 +172,32 @@
       const spec = +document.getElementById('flatSpec').value;
       const skill = +document.getElementById('flatSkill').value;
       const dmg0 = +document.getElementById('flatDmg').value;
+
       const totalNo = base+equip+tech+spec;
       const totalWith = totalNo + skill;
-      const rateWith = 1 + totalWith/100;
       const rateNo = 1 + totalNo/100;
+      const rateWith = 1 + totalWith/100;
       const ratio = rateWith/rateNo;
       const newDmg = dmg0 * ratio;
+
       const dmg = round(newDmg);
       const minDmg = round(newDmg - 1);
       const maxDmg = round(newDmg + 4);
-      document.getElementById('flatResult').innerHTML = `<span class="highlight">新伤害: ${dmg}</span>`+
-        `有技能面板: ${totalWith} → 倍率 ${fmt(rateWith)}<br>`+
-        `原始面板: ${totalNo} → 倍率 ${fmt(rateNo)}<br>`+
-        `提升比例: ${fmt(ratio)} (${pct(ratio)})<br>`+
-        `<span class=\"warning\">⚡ 波动范围: ${minDmg} ~ ${maxDmg}</span>`;
+
+      document.getElementById('flatResult').innerHTML = `
+        <span class="highlight">新伤害: ${dmg}</span>
+        提升比例: ${fmt(ratio)}<br>
+        <span class="warning">⚡ 波动范围: ${minDmg} ~ ${maxDmg}</span>
+      `;
+
+      document.getElementById('flatDetails').innerText =
+        `总面板无技能 = ${base}+${equip}+${tech}+${spec} = ${totalNo}\n`+
+        `总面板有技能 = ${totalNo}+${skill} = ${totalWith}\n`+
+        `倍率无技能 = 1 + ${totalNo}/100 = ${fmt(rateNo)}\n`+
+        `倍率有技能 = 1 + ${totalWith}/100 = ${fmt(rateWith)}\n`+
+        `提升比例 = ${fmt(rateWith)} / ${fmt(rateNo)} = ${fmt(ratio)}\n`+
+        `新伤害 = ${dmg0} × ${fmt(ratio)} = ${newDmg.toFixed(2)}\n`+
+        `范围 = ${minDmg} ~ ${maxDmg}`;
     }
 
     function calcPerc(){
@@ -167,34 +210,35 @@
 
       const totalNo = base+equip+tech+spec;
       const totalWith = totalNo * perc;
-      const rateWith = 1 + totalWith/100;
       const rateNo = 1 + totalNo/100;
+      const rateWith = 1 + totalWith/100;
       const ratio = rateWith/rateNo;
-
       const newDmg = dmg0 * ratio;
+
       const dmg = round(newDmg);
       const minDmg = round(newDmg - 1);
       const maxDmg = round(newDmg + 4);
 
-      const perc1 = 1.01, perc10 = 1.10;
-      const total1  = totalNo * perc1;
-      const total10 = totalNo * perc10;
-      const newDmg1 = round(dmg0 * ((1 + total1/100) / rateNo));
-      const newDmg10 = round(dmg0 * ((1 + total10/100) / rateNo));
+      document.getElementById('percResult').innerHTML = `
+        <span class="highlight">新伤害: ${dmg}</span>
+        提升比例: ${fmt(ratio)}<br>
+        <span class="warning">⚡ 波动范围: ${minDmg} ~ ${maxDmg}</span>
+      `;
 
-      document.getElementById('percResult').innerHTML = `<span class="highlight">新伤害: ${dmg}</span>`+
-        `有技能面板: ${fmt(totalWith)} → 倍率 ${fmt(rateWith)}<br>`+
-        `原始面板: ${fmt(totalNo)} → 倍率 ${fmt(rateNo)}<br>`+
-        `提升比例: ${fmt(ratio)} (${pct(ratio)})<br>`+
-        `<span class=\"warning\">⚡ 波动范围: ${minDmg} ~ ${maxDmg}</span><br><br>`+
-        `<b>额外参考</b><br>`+
-        `+1% 技能 → 新伤害: ${newDmg1}<br>`+
-        `+10% 技能 → 新伤害: ${newDmg10}`;
+      document.getElementById('percDetails').innerText =
+        `总面板无技能 = ${base}+${equip}+${tech}+${spec} = ${totalNo}\n`+
+        `应用技能 = ${totalNo} × ${perc} = ${fmt(totalWith)}\n`+
+        `倍率无技能 = 1 + ${totalNo}/100 = ${fmt(rateNo)}\n`+
+        `倍率有技能 = 1 + ${fmt(totalWith)}/100 = ${fmt(rateWith)}\n`+
+        `提升比例 = ${fmt(rateWith)} / ${fmt(rateNo)} = ${fmt(ratio)}\n`+
+        `新伤害 = ${dmg0} × ${fmt(ratio)} = ${newDmg.toFixed(2)}\n`+
+        `范围 = ${minDmg} ~ ${maxDmg}`;
     }
 
-    function resetMain(){ ['attr','attrEff','weaponDmg','weaponCoef','weaponEff','armorEff','skillAdd','skillMul','debuff','myLv','enemyLv','dangerLv'].forEach(id=>document.getElementById(id).value=document.getElementById(id).defaultValue); document.getElementById('result').innerHTML=''; }
-    function resetFlat(){ ['flatBase','flatEquip','flatTech','flatSpec','flatSkill','flatDmg'].forEach(id=>document.getElementById(id).value=document.getElementById(id).defaultValue); document.getElementById('flatResult').innerHTML=''; }
-    function resetPerc(){ ['percBase','percEquip','percTech','percSpec','percSkill','percDmg'].forEach(id=>document.getElementById(id).value=document.getElementById(id).defaultValue); document.getElementById('percResult').innerHTML=''; }
+    function resetMain(){ ['attr','attrEff','weaponDmg','weaponCoef','weaponEff','armorEff','skillAdd','skillMul','debuff','myLv','enemyLv','dangerLv'].forEach(id=>document.getElementById(id).value=document.getElementById(id).defaultValue); document.getElementById('result').innerHTML=''; document.getElementById('mainDetails').style.display='none'; }
+    function resetFlat(){ ['flatBase','flatEquip','flatTech','flatSpec','flatSkill','flatDmg'].forEach(id=>document.getElementById(id).value=document.getElementById(id).defaultValue); document.getElementById('flatResult').innerHTML=''; document.getElementById('flatDetails').style.display='none'; }
+    function resetPerc(){ ['percBase','percEquip','percTech','percSpec','percSkill','percDmg'].forEach(id=>document.getElementById(id).value=document.getElementById(id).defaultValue); document.getElementById('percResult').innerHTML=''; document.getElementById('percDetails').style.display='none'; }
   </script>
 </body>
 </html>
+
