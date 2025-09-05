@@ -165,40 +165,44 @@
         `最终伤害 = ${dmg} (范围 ${minDmg} ~ ${maxDmg})`;
     }
 
-    function calcFlat(){
-      const base = +document.getElementById('flatBase').value;
-      const equip = +document.getElementById('flatEquip').value;
-      const tech = +document.getElementById('flatTech').value;
-      const spec = +document.getElementById('flatSpec').value;
-      const skill = +document.getElementById('flatSkill').value;
-      const dmg0 = +document.getElementById('flatDmg').value;
+      function calcPerc(){
+    const base = +document.getElementById('percBase').value;
+    const equip = +document.getElementById('percEquip').value;
+    const tech = +document.getElementById('percTech').value;
+    const spec = +document.getElementById('percSpec').value;
+    const perc = +document.getElementById('percSkill').value;
+    const dmg0 = +document.getElementById('percDmg').value;
 
-      const totalNo = base+equip+tech+spec;
-      const totalWith = totalNo + skill;
-      const rateNo = 1 + totalNo/100;
-      const rateWith = 1 + totalWith/100;
-      const ratio = rateWith/rateNo;
-      const newDmg = dmg0 * ratio;
+    // 按你的要求：无技能=不含专武
+    const totalNo = base + equip + tech;       // 439
+    const totalWithSpec = totalNo + spec;      // 468
+    const applied = totalWithSpec * perc;      // 514.8
 
-      const dmg = round(newDmg);
-      const minDmg = round(newDmg - 1);
-      const maxDmg = round(newDmg + 4);
+    const rateNo = 1 + totalNo / 100;          // 5.39
+    const rateWith = 1 + applied / 100;        // 6.148
+    const ratio = rateWith / rateNo;           // 1.14063
+    const newDmg = dmg0 * ratio;               // 78
 
-      document.getElementById('flatResult').innerHTML = `
-        <span class="highlight">新伤害: ${dmg}</span>
-        提升比例: ${fmt(ratio)}<br>
-        <span class="warning">⚡ 波动范围: ${minDmg} ~ ${maxDmg}</span>
-      `;
+    const dmg = Math.round(newDmg);
+    const minDmg = Math.round(newDmg - 1);
+    const maxDmg = Math.round(newDmg + 4);
 
-      document.getElementById('flatDetails').innerText =
-        `总面板无技能 = ${base}+${equip}+${tech}+${spec} = ${totalNo}\n`+
-        `总面板有技能 = ${totalNo}+${skill} = ${totalWith}\n`+
-        `倍率无技能 = 1 + ${totalNo}/100 = ${fmt(rateNo)}\n`+
-        `倍率有技能 = 1 + ${totalWith}/100 = ${fmt(rateWith)}\n`+
-        `提升比例 = ${fmt(rateWith)} / ${fmt(rateNo)} = ${fmt(ratio)}\n`+
-        `新伤害 = ${dmg0} × ${fmt(ratio)} = ${newDmg.toFixed(2)}\n`+
-        `范围 = ${minDmg} ~ ${maxDmg}`;
-    }
+    document.getElementById('percResult').innerHTML = `
+      <span class="highlight">新伤害: ${dmg}</span>
+      提升比例: ${ratio.toFixed(6)}<br>
+      <span class="warning">⚡ 波动范围: ${minDmg} ~ ${maxDmg}</span>
+    `;
+
+    document.getElementById('percDetails').innerText =
+      `总面板无技能 = ${base}+${equip}+${tech} = ${totalNo}\n`+
+      `应用技能基准 = ${totalNo}+${spec} = ${totalWithSpec}\n`+
+      `应用技能 = ${totalWithSpec} × ${perc} = ${applied.toFixed(3)}\n`+
+      `倍率无技能 = 1 + ${totalNo}/100 = ${rateNo.toFixed(3)}\n`+
+      `倍率有技能 = 1 + ${applied.toFixed(3)}/100 = ${rateWith.toFixed(3)}\n`+
+      `提升比例 = ${rateWith.toFixed(3)} ÷ ${rateNo.toFixed(3)} = ${ratio.toFixed(6)}\n`+
+      `新伤害 = ${dmg0} × ${ratio.toFixed(6)} = ${newDmg.toFixed(2)}\n`+
+      `范围 = ${minDmg} ~ ${maxDmg}`;
+  }
 
     function calcPerc(){
       const base = +document.getElementById('percBase').value;
