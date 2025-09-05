@@ -121,51 +121,87 @@
     Azurlane Damage Calculator v1.0 | Made by <a href="https://github.com/yourname" style="color:#9ca3af;">yourname</a>
   </footer>
 
-  <script>
-    function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
-    function round(n){ return Math.round(n); }
-    function fmt(n){ return (Math.round(n*1000)/1000).toString(); }
-    function toggleDetails(id){
-      const el = document.getElementById(id);
-      el.style.display = el.style.display === "block" ? "none" : "block";
-    }
+<script>
+  function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+  function round(n){ return Math.round(n); }
+  function fmt(n){ return (Math.round(n*1000)/1000).toString(); }
 
-    function calc(){
-      const attr = +document.getElementById('attr').value;
-      const attrEff = +document.getElementById('attrEff').value;
-      const weaponDmg = +document.getElementById('weaponDmg').value;
-      const weaponCoef = +document.getElementById('weaponCoef').value;
-      const weaponEff = +document.getElementById('weaponEff').value;
-      const armorEff = +document.getElementById('armorEff').value;
-      const skillAdd = +document.getElementById('skillAdd').value;
-      const skillMul = +document.getElementById('skillMul').value;
-      const debuff = +document.getElementById('debuff').value;
-      const myLv = +document.getElementById('myLv').value;
-      const enemyLv = +document.getElementById('enemyLv').value;
-      const dangerLv = +document.getElementById('dangerLv').value;
+  function toggleDetails(id){
+    const el = document.getElementById(id);
+    el.style.display = el.style.display === "block" ? "none" : "block";
+  }
 
-      let levelCoef = clamp(1 + (myLv - enemyLv + dangerLv) * 0.02, 0.5, 1.5);
-      const statBlock = 1 + attr * attrEff / 100;
-      const part1 = statBlock * weaponDmg;
-      const base = part1 * weaponCoef * weaponEff * armorEff * skillAdd * debuff * levelCoef * skillMul;
+  function calc(){
+    const attr = +document.getElementById('attr').value;
+    const attrEff = +document.getElementById('attrEff').value;
+    const weaponDmg = +document.getElementById('weaponDmg').value;
+    const weaponCoef = +document.getElementById('weaponCoef').value;
+    const weaponEff = +document.getElementById('weaponEff').value;
+    const armorEff = +document.getElementById('armorEff').value;
+    const skillAdd = +document.getElementById('skillAdd').value;
+    const skillMul = +document.getElementById('skillMul').value;
+    const debuff = +document.getElementById('debuff').value;
+    const myLv = +document.getElementById('myLv').value;
+    const enemyLv = +document.getElementById('enemyLv').value;
+    const dangerLv = +document.getElementById('dangerLv').value;
 
-      const dmg = round(base);
-      const minDmg = round(base - 1);
-      const maxDmg = round(base + 4);
+    let levelCoef = clamp(1 + (myLv - enemyLv + dangerLv) * 0.02, 0.5, 1.5);
+    const statBlock = 1 + attr * attrEff / 100;
+    const part1 = statBlock * weaponDmg;
+    const base = part1 * weaponCoef * weaponEff * armorEff * skillAdd * debuff * levelCoef * skillMul;
 
-      document.getElementById('result').innerHTML = `
-        <span class="highlight">最终伤害: ${dmg}</span>
-        未取整: ${fmt(base)}<br>
-        <span class="warning">⚡ 波动范围: ${minDmg} ~ ${maxDmg}</span>
-      `;
+    const dmg = round(base);
+    const minDmg = round(base - 1);
+    const maxDmg = round(base + 4);
 
-      document.getElementById('mainDetails').innerText =
-        `(1 + ${attr}×${attrEff}/100) × ${weaponDmg} × ${weaponCoef} × ${weaponEff} × ${armorEff} × ${skillAdd} × ${debuff} × ${levelCoef}\n`+
-        `= ${fmt(base)}\n`+
-        `最终伤害 = ${dmg} (范围 ${minDmg} ~ ${maxDmg})`;
-    }
+    document.getElementById('result').innerHTML = `
+      <span class="highlight">最终伤害: ${dmg}</span>
+      未取整: ${fmt(base)}<br>
+      <span class="warning">⚡ 波动范围: ${minDmg} ~ ${maxDmg}</span>
+    `;
 
-      function calcPerc(){
+    document.getElementById('mainDetails').innerText =
+      `(1 + ${attr}×${attrEff}/100) × ${weaponDmg} × ${weaponCoef} × ${weaponEff} × ${armorEff} × ${skillAdd} × ${debuff} × ${levelCoef}\n`+
+      `= ${fmt(base)}\n`+
+      `最终伤害 = ${dmg} (范围 ${minDmg} ~ ${maxDmg})`;
+  }
+
+  function calcFlat(){
+    const base = +document.getElementById('flatBase').value;
+    const equip = +document.getElementById('flatEquip').value;
+    const tech = +document.getElementById('flatTech').value;
+    const spec = +document.getElementById('flatSpec').value;
+    const skill = +document.getElementById('flatSkill').value;
+    const dmg0 = +document.getElementById('flatDmg').value;
+
+    const totalNo = base+equip+tech+spec;
+    const totalWith = totalNo + skill;
+    const rateNo = 1 + totalNo/100;
+    const rateWith = 1 + totalWith/100;
+    const ratio = rateWith/rateNo;
+    const newDmg = dmg0 * ratio;
+
+    const dmg = round(newDmg);
+    const minDmg = round(newDmg - 1);
+    const maxDmg = round(newDmg + 4);
+
+    document.getElementById('flatResult').innerHTML = `
+      <span class="highlight">新伤害: ${dmg}</span>
+      提升比例: ${fmt(ratio)}<br>
+      <span class="warning">⚡ 波动范围: ${minDmg} ~ ${maxDmg}</span>
+    `;
+
+    document.getElementById('flatDetails').innerText =
+      `总面板无技能 = ${base}+${equip}+${tech}+${spec} = ${totalNo}\n`+
+      `总面板有技能 = ${totalNo}+${skill} = ${totalWith}\n`+
+      `倍率无技能 = 1 + ${totalNo}/100 = ${fmt(rateNo)}\n`+
+      `倍率有技能 = 1 + ${totalWith}/100 = ${fmt(rateWith)}\n`+
+      `提升比例 = ${fmt(rateWith)} / ${fmt(rateNo)} = ${fmt(ratio)}\n`+
+      `新伤害 = ${dmg0} × ${fmt(ratio)} = ${newDmg.toFixed(2)}\n`+
+      `范围 = ${minDmg} ~ ${maxDmg}`;
+  }
+
+  function calcPerc(){
     const base = +document.getElementById('percBase').value;
     const equip = +document.getElementById('percEquip').value;
     const tech = +document.getElementById('percTech').value;
@@ -173,15 +209,14 @@
     const perc = +document.getElementById('percSkill').value;
     const dmg0 = +document.getElementById('percDmg').value;
 
-    // 按你的要求：无技能=不含专武
-    const totalNo = base + equip + tech;       // 439
-    const totalWithSpec = totalNo + spec;      // 468
-    const applied = totalWithSpec * perc;      // 514.8
+    const totalNo = base + equip + tech;        // 439
+    const totalWithSpec = totalNo + spec;       // 468
+    const applied = totalWithSpec * perc;       // 514.8
 
-    const rateNo = 1 + totalNo / 100;          // 5.39
-    const rateWith = 1 + applied / 100;        // 6.148
-    const ratio = rateWith / rateNo;           // 1.14063
-    const newDmg = dmg0 * ratio;               // 78
+    const rateNo = 1 + totalNo/100;             // 5.39
+    const rateWith = 1 + applied/100;           // 6.148
+    const ratio = rateWith / rateNo;            // 1.14063
+    const newDmg = dmg0 * ratio;                // 78
 
     const dmg = Math.round(newDmg);
     const minDmg = Math.round(newDmg - 1);
@@ -197,52 +232,18 @@
       `总面板无技能 = ${base}+${equip}+${tech} = ${totalNo}\n`+
       `应用技能基准 = ${totalNo}+${spec} = ${totalWithSpec}\n`+
       `应用技能 = ${totalWithSpec} × ${perc} = ${applied.toFixed(3)}\n`+
-      `倍率无技能 = 1 + ${totalNo}/100 = ${rateNo.toFixed(3)}\n`+
+      `倍率无技能 = 1 + ${totalNo}/100 = ${rateNo.toFixed(2)}\n`+
       `倍率有技能 = 1 + ${applied.toFixed(3)}/100 = ${rateWith.toFixed(3)}\n`+
-      `提升比例 = ${rateWith.toFixed(3)} ÷ ${rateNo.toFixed(3)} = ${ratio.toFixed(6)}\n`+
+      `提升比例 = ${rateWith.toFixed(3)} ÷ ${rateNo.toFixed(2)} = ${ratio.toFixed(6)}\n`+
       `新伤害 = ${dmg0} × ${ratio.toFixed(6)} = ${newDmg.toFixed(2)}\n`+
       `范围 = ${minDmg} ~ ${maxDmg}`;
   }
 
-    function calcPerc(){
-      const base = +document.getElementById('percBase').value;
-      const equip = +document.getElementById('percEquip').value;
-      const tech = +document.getElementById('percTech').value;
-      const spec = +document.getElementById('percSpec').value;
-      const perc = +document.getElementById('percSkill').value;
-      const dmg0 = +document.getElementById('percDmg').value;
+  function resetMain(){ ['attr','attrEff','weaponDmg','weaponCoef','weaponEff','armorEff','skillAdd','skillMul','debuff','myLv','enemyLv','dangerLv'].forEach(id=>document.getElementById(id).value=document.getElementById(id).defaultValue); document.getElementById('result').innerHTML=''; document.getElementById('mainDetails').style.display='none'; }
+  function resetFlat(){ ['flatBase','flatEquip','flatTech','flatSpec','flatSkill','flatDmg'].forEach(id=>document.getElementById(id).value=document.getElementById(id).defaultValue); document.getElementById('flatResult').innerHTML=''; document.getElementById('flatDetails').style.display='none'; }
+  function resetPerc(){ ['percBase','percEquip','percTech','percSpec','percSkill','percDmg'].forEach(id=>document.getElementById(id).value=document.getElementById(id).defaultValue); document.getElementById('percResult').innerHTML=''; document.getElementById('percDetails').style.display='none'; }
+</script>
 
-      const totalNo = base+equip+tech+spec;
-      const totalWith = totalNo * perc;
-      const rateNo = 1 + totalNo/100;
-      const rateWith = 1 + totalWith/100;
-      const ratio = rateWith/rateNo;
-      const newDmg = dmg0 * ratio;
-
-      const dmg = round(newDmg);
-      const minDmg = round(newDmg - 1);
-      const maxDmg = round(newDmg + 4);
-
-      document.getElementById('percResult').innerHTML = `
-        <span class="highlight">新伤害: ${dmg}</span>
-        提升比例: ${fmt(ratio)}<br>
-        <span class="warning">⚡ 波动范围: ${minDmg} ~ ${maxDmg}</span>
-      `;
-
-      document.getElementById('percDetails').innerText =
-        `总面板无技能 = ${base}+${equip}+${tech}+${spec} = ${totalNo}\n`+
-        `应用技能 = ${totalNo} × ${perc} = ${fmt(totalWith)}\n`+
-        `倍率无技能 = 1 + ${totalNo}/100 = ${fmt(rateNo)}\n`+
-        `倍率有技能 = 1 + ${fmt(totalWith)}/100 = ${fmt(rateWith)}\n`+
-        `提升比例 = ${fmt(rateWith)} / ${fmt(rateNo)} = ${fmt(ratio)}\n`+
-        `新伤害 = ${dmg0} × ${fmt(ratio)} = ${newDmg.toFixed(2)}\n`+
-        `范围 = ${minDmg} ~ ${maxDmg}`;
-    }
-
-    function resetMain(){ ['attr','attrEff','weaponDmg','weaponCoef','weaponEff','armorEff','skillAdd','skillMul','debuff','myLv','enemyLv','dangerLv'].forEach(id=>document.getElementById(id).value=document.getElementById(id).defaultValue); document.getElementById('result').innerHTML=''; document.getElementById('mainDetails').style.display='none'; }
-    function resetFlat(){ ['flatBase','flatEquip','flatTech','flatSpec','flatSkill','flatDmg'].forEach(id=>document.getElementById(id).value=document.getElementById(id).defaultValue); document.getElementById('flatResult').innerHTML=''; document.getElementById('flatDetails').style.display='none'; }
-    function resetPerc(){ ['percBase','percEquip','percTech','percSpec','percSkill','percDmg'].forEach(id=>document.getElementById(id).value=document.getElementById(id).defaultValue); document.getElementById('percResult').innerHTML=''; document.getElementById('percDetails').style.display='none'; }
-  </script>
 </body>
 </html>
 
